@@ -4,9 +4,11 @@ function Routes() {
   
   return (
     <Router>
-        <h2 className="text-blue-500 font-bold text-2xl">Este es el router</h2>
+        <Header/>
+        <Redirect to="/"/>
         <Switch>
-            
+            <Route exact path="/" component={Inicio}/>
+            <Route  path="/formularioRegistro" component={FormularioRegistro}/>
         </Switch>
     </Router>
   );
