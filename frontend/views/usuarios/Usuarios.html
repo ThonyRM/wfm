@@ -1,0 +1,47 @@
+//<script type="text/jsx">
+    function Usuarios() {
+        
+        const[dataSource,setDataSource]= useState([]);
+        //UseEffect, funcion que se ejecuta de manera automatica cuando se llame por primera vez el componente
+        useEffect(listarUsuarios,[])
+        
+        function listarUsuarios () {
+           google.script.run.withSuccessHandler(res =>{
+                const usuarios = JSON.parse(res);
+                let arreglo= [];
+                usuarios.map(usuario => {
+                    arreglo.push({
+                        key: usuario.id,
+                        ...usuario
+                    })
+                })
+                setDataSource(arreglo);
+                console.log(usuarios);
+           }).listarUsuarios();  
+
+        }
+
+          
+        const columns = [
+            {
+            title: 'Nombre Completo',
+            dataIndex: 'nombreCompleto',
+            key: 'nombreCompleto',
+            },
+            {
+            title: 'Correo',
+            dataIndex: 'correo',
+            key: 'correo',
+            },
+            {
+            title: 'Contraseña',
+            dataIndex: 'contrasenia',
+            key: 'contrasenia',
+            },
+        ];
+
+      return (
+        <Table dataSource={dataSource} columns={columns} />
+      );
+    }
+//</script>

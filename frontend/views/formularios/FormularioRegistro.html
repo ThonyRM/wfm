@@ -1,14 +1,25 @@
 //<script type="text/jsx">
 
 function FormularioRegistro() {
+
+    const [form] = Form.useForm();
+
     const guardarFormulario = (datosFormulario) =>{
-        console.log(datosFormulario) ;   
+
+        notificacionGuardando("Guardando usuario");
+        const id = v4();
+
+        google.script.run.withSuccessHandler(({titulo, descripcion}) => {
+            notificacionTareaTerminada(titulo, descripcion);
+            form.resetFields();
+        }).guardarUsuario(JSON.stringify({id , ...datosFormulario}));
     }
   
     return (
       <div className='px-20'>
         <h2 className="text-center font-bold text-xl my-6"> Formulario de Registro</h2>
         <Form 
+            form = {form}
             onFinish={guardarFormulario}
             layout= "vertical">
             <Item 

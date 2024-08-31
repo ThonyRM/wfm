@@ -18,13 +18,20 @@
     <!-- rutas -->
     <?!= include('backend/routes/Routes') ?>
 
-    <!-- vistas -->
-    <?!= include('frontend/views/Inicio') ?>
-    <?!= include('frontend/components/Header') ?>
-    <?!= include('frontend/views/formularios/FormularioRegistro') ?>
 
-    <!-- componente App o componente raiz -->
-    <?!= include('frontend/App') ?>
+    
+
+     <!-- helpers -->
+     <?!= include('frontend/helpers/modalesNotificaciones') ?>
+
+     <!-- vistas -->
+     <?!= include('frontend/views/Inicio') ?>
+     <?!= include('frontend/components/Header') ?>
+     <?!= include('frontend/views/formularios/FormularioRegistro') ?>
+     <?!= include('frontend/views/usuarios/Usuarios') ?>
+     
+     <!-- componente App o componente raiz -->
+     <?!= include('frontend/App') ?>
   
 </components>
   
