@@ -4,55 +4,99 @@ function FormularioRegistro() {
 
     const [form] = Form.useForm();
 
-    const guardarFormulario = (datosFormulario) =>{
+    const{id} = useParams();
+    const [initialValues, setInitialValues] = useState(undefined);
 
-        notificacionGuardando("Guardando usuario");
-        const id = v4();
+    useEffect( ()=>{
+        if(id){
+            google.script.run
+            .withSuccessHandler(res=>
+            {
+                const usuario = JSON.parse(res);
+                setInitialValues(usuario);
+            }).listarUsuarios(id)
+        }
 
-        google.script.run.withSuccessHandler(({titulo, descripcion}) => {
-            notificacionTareaTerminada(titulo, descripcion);
-            form.resetFields();
-        }).guardarUsuario(JSON.stringify({id , ...datosFormulario}));
-    }
-  
-    return (
-      <div className='px-20'>
-        <h2 className="text-center font-bold text-xl my-6"> Formulario de Registro</h2>
-        <Form 
-            form = {form}
-            onFinish={guardarFormulario}
-            layout= "vertical">
-            <Item 
-                name="nombreCompleto" 
-                label= "Nombre completo"
-                rules={[
-                    {required: true, message: "Es campo Nombre requerido"}
-                    ]}>
-                <Input/>
-            </Item>
-            <Item
-                name="correo" 
-                label= "Correo"
-                rules={[
-                    {type: "email", message: "El formato no de correo valido"},
-                    {required: true, message: "Es campo requerido"}
-                    ]}>
-                <Input/>
-            </Item>
-            <Item
-                name="contrasenia" 
-                label= "Contraseña"
-                rules={[
-                    {required: true, message: "Es campo Contraseña requerido"}
-                    ]}>
-                <Password />
-            </Item>
-            <Item className="text-center">
-                <Button htmlType="submit" >Guardar</Button>
-            </Item>
-        </Form>
-      </div>
-    );
-  }
+        },[])
+
+    const guardarFormulario = (datosFormulario) => {
+
+        notificacionesGuardando("Guardando Usuario")
     
-  //</script>
+
+        if(id){
+
+            google.script.run.withSuccessHandler(({titulo,descripcion}) => {
+                notificacionTareaTerminada(titulo,descripcion);
+                setInitialValues(undefined);
+                form.resetFields();
+            }).actualizarUsuario(id , JSON.stringify(datosFormulario ));
+
+        }else{
+
+            const id = v4();
+            google.script.run.withSuccessHandler(({titulo,descripcion}) => {
+                notificacionTareaTerminada(titulo,descripcion);
+                form.resetFields();
+        }).guardarUsuario(JSON.stringify({ id, ...datosFormulario }));
+        }
+
+        
+    }
+
+    const Formulario =  () =>{
+        return(
+            <Form
+                initialValues ={initialValues}
+                form={form}
+                layout="vertical"
+                onFinish={guardarFormulario}>
+                <Item
+                    rules={[
+                        { required: true, message: " El campo nombre es requerido para el registro" }
+                    ]}
+                    name="nombreCompleto"
+                    label="Nombre completo">
+                    <Input />
+                </Item>
+                <Item
+                    name="correo"
+                    label="Correo"
+                    rules={[
+                        { type: "email", message: "El formato no coincide con el de un correo válido" },
+                        { required: true, message: " El campo correo es requerido para el registro" }
+                    ]}>
+                    <Input />
+                </Item>
+                <Item
+                    name="contrasenia"
+                    label="Contraseña"
+                    rules={[
+                        { required: true, message: "El campo passwor es requerido para el registro" }
+                    ]}
+                >
+                    <Password />
+                </Item>
+                <Item
+                    className="text-center">
+                    <Button htmlType="submit">Guardar</Button>
+                </Item>
+            </Form>
+        )
+    }
+    return (
+        <div className="px-20">
+            <h2 className="text-center font-bold text-xl my-6"> Formulario de registro </h2>
+            {
+                (id && initialValues)
+                    ?<Formulario/>
+                    :<Formulario/>
+            }
+
+            
+        </div>
+    );
+}
+
+
+//</script>

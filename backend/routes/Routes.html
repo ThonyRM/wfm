@@ -8,7 +8,7 @@ function Routes() {
         <Redirect to="/"/>
         <Switch>
             <Route exact path="/" component={Inicio}/>
-            <Route  path="/formularioRegistro" component={FormularioRegistro}/>
+            <Route  path="/formularioRegistro/:id?" component={FormularioRegistro}/>
             <Route  path="/usuarios" component={Usuarios}/>
            
         </Switch>

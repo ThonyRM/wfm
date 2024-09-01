@@ -1,47 +1,82 @@
 //<script type="text/jsx">
-    function Usuarios() {
-        
-        const[dataSource,setDataSource]= useState([]);
-        //UseEffect, funcion que se ejecuta de manera automatica cuando se llame por primera vez el componente
-        useEffect(listarUsuarios,[])
-        
-        function listarUsuarios () {
-           google.script.run.withSuccessHandler(res =>{
-                const usuarios = JSON.parse(res);
-                let arreglo= [];
-                usuarios.map(usuario => {
-                    arreglo.push({
-                        key: usuario.id,
-                        ...usuario
-                    })
+
+function Usuarios() {
+    const [dataSource,setDataSource] = useState();
+    const [renderTabla, setRenderTabla] = useState(0);
+
+    useEffect(listarUsuarios, [renderTabla]);
+
+    const history = useHistory();
+
+    function listarUsuarios() {
+        google.script.run.withSuccessHandler(res => {
+            const usuarios = JSON.parse(res);
+            console.log(usuarios)
+            let arreglo = [];
+            usuarios.map(usuario =>{
+                arreglo.push({
+                    key: usuario.id,
+                    ... usuario,
+                    acciones: 
+                    <Fragment>
+                        <Button onClick = {()=>{
+                        history.push("/formularioRegistro/"+ usuario.id);
+                        }}>
+                        Editar  
+                        </Button>
+
+                        <button className="bg-red-500 text-white rounded-lg px-3 py-2 hover:shadow-xl"
+                        onClick = {()=>{   eliminarUsuario(usuario.id)                    
+                        }}>
+                        Eliminar
+                        </button>
+
+                    </Fragment>
+                    
                 })
-                setDataSource(arreglo);
-                console.log(usuarios);
-           }).listarUsuarios();  
+            })
+            setDataSource(arreglo);
+        }).listarUsuarios();
+    }
 
-        }
+    function eliminarUsuario(id) {
+        notificacionesGuardando("Eliminado");
+        google.script.run.withSuccessHandler(({titulo, descripcion}) =>{
+          notificacionTareaTerminada(titulo, descripcion);
+          setRenderTabla(renderTabla +1)
+        }).eliminiarUsuario(id);
+        
+    }
 
-          
-        const columns = [
-            {
-            title: 'Nombre Completo',
+
+    const columns = [
+        {
+            title: 'Nombre completo',
             dataIndex: 'nombreCompleto',
             key: 'nombreCompleto',
-            },
-            {
+        },
+        {
             title: 'Correo',
             dataIndex: 'correo',
             key: 'correo',
-            },
-            {
+        },
+        {
             title: 'Contraseña',
             dataIndex: 'contrasenia',
             key: 'contrasenia',
-            },
-        ];
+        },
 
-      return (
+        {
+            title: 'Acciones',
+            dataIndex: 'acciones',
+            key: 'acciones',
+        },
+    ];
+
+    return (
         <Table dataSource={dataSource} columns={columns} />
-      );
-    }
+    );
+}
+
+
 //</script>
